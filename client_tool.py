@@ -1,5 +1,5 @@
 import os
-from typing import Callable, Optional, Mapping
+from typing import Callable, Optional, Mapping, Any
 
 import pyaudio
 from dotenv import load_dotenv
@@ -8,6 +8,7 @@ from elevenlabs.conversational_ai.conversation import (
     Conversation,
     ClientTools,
     AudioInterface,
+    ConversationConfig,
 )
 
 load_dotenv()
@@ -74,13 +75,16 @@ class MacAudioInterface(AudioInterface):
             self.output_stream = None
 
 
-def log_message(parameters: dict[str, str]) -> None:
+def log_message(parameters: dict[str, Any]) -> None:
     message = parameters.get("message", "")
     print(message)
 
 
 client_tools = ClientTools()  # type: ignore
 client_tools.register("logMessage", log_message)
+config = ConversationConfig(
+    dynamic_variables={"YAHOO_API_CLIENT_ID": os.getenv("YAHOO_API_CLIENT_ID")}
+)
 
 conversation = Conversation(
     client=ElevenLabs(api_key=os.getenv("ELEVEN_LABS_API_KEY")),
@@ -88,5 +92,6 @@ conversation = Conversation(
     client_tools=client_tools,
     audio_interface=MacAudioInterface(),
     requires_auth=False,
+    config=config,
 )
 conversation.start_session()  # type: ignore

@@ -1,0 +1,35 @@
+[project]
+authors = [
+    { name = "None" },
+]
+dependencies = [
+    "elevenlabs (>=1.51.0,<2.0.0)",
+    "pyaudio (>=0.2.14,<0.3.0)",
+    "black (>=25.1.0,<26.0.0)",
+    "python-dotenv (>=1.0.1,<2.0.0)",
+    "mypy (>=1.15.0,<2.0.0)"
+]
+description = ""
+name = "11labs"
+readme = "README.md"
+requires-python = ">=3.13, <4.0"
+version = "0.1.0"
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.group.dev.dependencies]
+types-pyaudio = "^0.2.16.20240516"
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+namespace_packages = true
+exclude = "(^|/|\\\\)(venv)($|/|\\\\)"
+[[tool.mypy.overrides]]
+module = "elevenlabs.*"
+ignore_missing_imports = true

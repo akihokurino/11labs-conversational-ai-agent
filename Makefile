@@ -1,0 +1,2 @@
+types:
+	poetry run mypy .

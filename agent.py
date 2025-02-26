@@ -13,6 +13,12 @@ from elevenlabs.conversational_ai.conversation import (
 
 load_dotenv()
 
+AUDIO_CHANNELS = 1  # モノラル
+AUDIO_FORMAT = pyaudio.paInt16  # 16-bit PCM
+AUDIO_SAMPLE_RATE = 16000  # サンプルレート 16kHz
+AUDIO_BUFFER_SIZE = 4000  # バッファサイズ（約250ms）
+AGENT_ID = "MHxOLcV2h0PXbuuV3h6Z"
+
 
 class MacAudioInterface(AudioInterface):
     def __init__(self) -> None:
@@ -26,11 +32,11 @@ class MacAudioInterface(AudioInterface):
         self.input_callback = input_callback
         self.running = True
         self.input_stream = self.pyaudio_instance.open(
-            format=pyaudio.paInt16,  # 16-bit PCM
-            channels=1,  # モノラル
-            rate=16000,  # サンプルレート 16kHz
+            format=AUDIO_FORMAT,
+            channels=AUDIO_CHANNELS,
+            rate=AUDIO_SAMPLE_RATE,
             input=True,
-            frames_per_buffer=4000,  # 推奨チャンクサイズ（約250ms）
+            frames_per_buffer=AUDIO_BUFFER_SIZE,
             stream_callback=self._input_stream_callback,
         )
         self.input_stream.start_stream()
@@ -61,9 +67,9 @@ class MacAudioInterface(AudioInterface):
     def output(self, audio: bytes) -> None:
         if self.output_stream is None:
             self.output_stream = self.pyaudio_instance.open(
-                format=pyaudio.paInt16,  # 16-bit PCM
-                channels=1,  # モノラル
-                rate=16000,  # サンプルレート 16kHz
+                format=AUDIO_FORMAT,
+                channels=AUDIO_CHANNELS,
+                rate=AUDIO_SAMPLE_RATE,
                 output=True,
             )
         self.output_stream.write(audio)
@@ -83,12 +89,21 @@ def log_message(parameters: dict[str, Any]) -> None:
 client_tools = ClientTools()  # type: ignore
 client_tools.register("logMessage", log_message)
 config = ConversationConfig(
-    dynamic_variables={"YAHOO_API_CLIENT_ID": os.getenv("YAHOO_API_CLIENT_ID")}
+    dynamic_variables={
+        "USER_NAME": "あきほ",
+        "YAHOO_API_CLIENT_ID": os.getenv("YAHOO_API_CLIENT_ID"),
+    },
+    conversation_config_override={
+        "agent": {
+            # "first_message": "こんにちは。どうかされました？",
+            # "language": "en",
+        },
+    },
 )
 
 conversation = Conversation(
     client=ElevenLabs(api_key=os.getenv("ELEVEN_LABS_API_KEY")),
-    agent_id="MHxOLcV2h0PXbuuV3h6Z",
+    agent_id=AGENT_ID,
     client_tools=client_tools,
     audio_interface=MacAudioInterface(),
     requires_auth=False,

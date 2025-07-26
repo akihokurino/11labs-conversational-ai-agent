@@ -1,3 +1,3 @@
-# Elevenlabs conversation python sample
+# Elevenlabs Conversation AI Agent
 
 https://elevenlabs.io/docs/overview

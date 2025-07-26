@@ -8,16 +8,16 @@ from elevenlabs.conversational_ai.conversation import (
     Conversation,
     ClientTools,
     AudioInterface,
-    ConversationConfig,
+    ConversationInitiationData,
 )
 
 load_dotenv()
 
 AUDIO_CHANNELS = 1  # モノラル
-AUDIO_FORMAT = pyaudio.paInt16  # 16-bit PCM
+AUDIO_FORMAT = pyaudio.paInt16  # PCM 16000 Hz
 AUDIO_SAMPLE_RATE = 16000  # サンプルレート 16kHz
 AUDIO_BUFFER_SIZE = 4000  # バッファサイズ（約250ms）
-AGENT_ID = "MHxOLcV2h0PXbuuV3h6Z"
+AGENT_ID = str(os.getenv("ELEVEN_LABS_AGENT_ID"))
 
 
 class MacAudioInterface(AudioInterface):
@@ -88,15 +88,11 @@ def log_message(parameters: dict[str, Any]) -> None:
 
 client_tools = ClientTools()  # type: ignore
 client_tools.register("logMessage", log_message)
-config = ConversationConfig(
-    dynamic_variables={
-        "USER_NAME": "あきほ",
-        "YAHOO_API_CLIENT_ID": os.getenv("YAHOO_API_CLIENT_ID"),
-    },
+config = ConversationInitiationData(
+    dynamic_variables={},
     conversation_config_override={
         "agent": {
             # "first_message": "こんにちは。どうかされました？",
-            # "language": "en",
         },
     },
 )

@@ -1,5 +1,5 @@
 types:
-	poetry run mypy .
+	uv run mypy .
 
 run:
-	poetry run python agent.py
+	uv run python agent.py

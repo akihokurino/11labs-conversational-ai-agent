@@ -1,3 +1,6 @@
+vendor:
+	uv sync
+
 types:
 	uv run mypy .
 
